@@ -28,12 +28,33 @@ export function EnhancedHeroSection({ onSearch }: EnhancedHeroSectionProps) {
     router.push('/search');
   };
 
+  const handleSearchSubmit = (query: string, location: string, city?: string) => {
+    if (onSearch) {
+      onSearch(query, location);
+    } else {
+      // Navigate to search page with all params
+      const searchParams = new URLSearchParams();
+      searchParams.set('q', query.trim());
+      
+      if (location) {
+        searchParams.set('location', location);
+      }
+      
+      if (city) {
+        searchParams.set('city', city);
+      }
+      
+      router.push(`/search?${searchParams.toString()}`);
+    }
+  };
+
   return (
     <div className="relative">
       {/* Main Animated Hero */}
       <AnimatedHero 
         onConsultClick={handleConsultClick}
         onFindDoctorsClick={handleFindDoctorsClick}
+        onSearchSubmit={handleSearchSubmit}
       />
 
       {/* Interactive Chat Demo Section */}

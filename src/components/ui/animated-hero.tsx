@@ -4,13 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { MoveRight, Stethoscope, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HealthcareAIChatbox } from "@/components/ui/healthcare-ai-chatbox";
 
 interface AnimatedHeroProps {
   onConsultClick?: () => void;
   onFindDoctorsClick?: () => void;
+  onSearchSubmit?: (query: string, location: string, city?: string) => void;
 }
 
-function AnimatedHero({ onConsultClick, onFindDoctorsClick }: AnimatedHeroProps) {
+function AnimatedHero({ onConsultClick, onFindDoctorsClick, onSearchSubmit }: AnimatedHeroProps) {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(
     () => ["innovative", "trusted", "advanced", "personalized", "accessible"],
@@ -112,32 +114,14 @@ function AnimatedHero({ onConsultClick, onFindDoctorsClick }: AnimatedHeroProps)
             </p>
           </motion.div>
 
-          {/* Action buttons */}
+          {/* AI Healthcare Chatbox */}
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4 w-full max-w-md"
+            className="w-full max-w-4xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <Button 
-              size="lg" 
-              className="gap-4 bg-medifly-teal hover:bg-medifly-teal/90 text-white flex-1 h-14 text-base font-medium rounded-xl" 
-              variant="default"
-              onClick={handleConsultClick}
-            >
-              <Stethoscope className="w-5 h-5" />
-              Consult Specialist
-            </Button>
-            <Button 
-              size="lg" 
-              className="gap-4 flex-1 h-14 text-base font-medium rounded-xl border-2 border-medifly-teal text-medifly-teal hover:bg-medifly-teal hover:text-white" 
-              variant="outline"
-              onClick={handleFindDoctorsClick}
-            >
-              <Users className="w-5 h-5" />
-              Find Doctors
-              <MoveRight className="w-5 h-5" />
-            </Button>
+            <HealthcareAIChatbox onSearchSubmit={onSearchSubmit} />
           </motion.div>
 
           {/* Trust indicators */}
