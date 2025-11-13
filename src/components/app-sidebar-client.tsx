@@ -26,7 +26,8 @@ import {
 import { NavDocuments } from '@/components/nav-documents'
 import { NavMain } from '@/components/nav-main'
 import { NavSecondary } from '@/components/nav-secondary'
-import { NavUserClient } from '@/components/nav-user-client'
+import { NavUsage } from '@/components/nav-usage'
+import { NavUser } from '@/components/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -36,7 +37,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { useUser } from '@/contexts/user-context'
+import type { AuthUser } from '@/types/auth'
 
 const data = {
   navMain: [
@@ -136,9 +137,12 @@ const data = {
   ],
 }
 
-export function AppSidebarClient({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useUser()
-  
+export function AppSidebarClient({ 
+  user, 
+  ...props 
+}: React.ComponentProps<typeof Sidebar> & {
+  user: AuthUser | null
+}) {
   if (!user) {
     return null
   }
@@ -162,11 +166,12 @@ export function AppSidebarClient({ ...props }: React.ComponentProps<typeof Sideb
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+        <NavUsage />
         <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUserClient user={user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )
