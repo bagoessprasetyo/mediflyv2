@@ -1,9 +1,11 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
+import { Grid } from '@/components/ui/feature-section-with-card-gradient';
 import Link from 'next/link';
+import { useId } from 'react';
 import {
   Heart,
   Bone,
@@ -132,121 +134,72 @@ const specialties = [
 
 export function BrowseSpecialties() {
   return (
-    <section className="py-16 lg:py-24 bg-white">
+    <section className="py-20 lg:py-28 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-medifly-dark mb-6">
-              Browse by Medical Specialty
+            <Badge 
+              variant="secondary"
+              className="bg-medifly-light-blue text-medifly-teal border-0 font-medium mb-6"
+            >
+              MEDICAL SPECIALTIES
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-medium tracking-tighter text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
+              Find Your Perfect Specialist
             </h2>
-            <p className="text-lg lg:text-xl text-medifly-gray max-w-3xl mx-auto">
-              Find the right specialist for your specific health needs. Our verified experts 
-              cover all major medical specialties with world-class care.
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Connect with world-class medical experts across all specialties. Our verified specialists 
+              deliver exceptional care with cutting-edge technology and personalized treatment approaches.
             </p>
           </div>
 
-          {/* Specialties Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {/* Specialties Grid with Gradient Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-4">
             {specialties.map((specialty, index) => {
               const Icon = specialty.icon;
               
               return (
-                <Card 
+                <Link 
                   key={index}
-                  className={`
-                    group hover-lift cursor-pointer border-0 shadow-soft
-                    ${specialty.bgColor} ${specialty.hoverColor}
-                    transition-all duration-300
-                  `}
+                  href={`/specialties/${specialty.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="group block"
                 >
-                  <Link href={`/specialties/${specialty.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                    <CardContent className="p-6 text-center">
-                      <div className="space-y-4">
-                        {/* Icon */}
-                        <div className="flex justify-center">
-                          <div className={`
-                            w-16 h-16 bg-white rounded-full shadow-soft
-                            flex items-center justify-center
-                            group-hover:scale-110 transition-transform duration-300
-                          `}>
-                            <Icon className={`h-8 w-8 ${specialty.color}`} />
-                          </div>
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="space-y-2">
-                          <h3 className="font-semibold text-medifly-dark group-hover:text-medifly-teal transition-colors">
-                            {specialty.name}
-                          </h3>
-                          <p className="text-xs text-medifly-gray leading-relaxed">
-                            {specialty.description}
-                          </p>
-                          <div className="text-xs font-medium text-medifly-teal">
-                            {specialty.specialists}
-                          </div>
-                        </div>
-
-                        {/* Hover Arrow */}
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <ArrowRight className="h-4 w-4 text-medifly-teal mx-auto" />
-                        </div>
+                  <div className="relative bg-gradient-to-b from-white via-gray-50/50 to-white p-6 rounded-3xl overflow-hidden border border-gray-200/50 hover:border-medifly-teal/30 transition-all duration-300 hover:shadow-lg">
+                    <Grid size={20} />
+                    
+                    {/* Icon */}
+                    <div className="flex justify-center mb-4 relative z-20">
+                      <div className="w-12 h-12 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Icon className={`h-6 w-6 ${specialty.color}`} />
                       </div>
-                    </CardContent>
-                  </Link>
-                </Card>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="text-center space-y-2 relative z-20">
+                      <h3 className="text-base font-bold text-gray-800 group-hover:text-medifly-teal transition-colors">
+                        {specialty.name}
+                      </h3>
+                      <p className="text-gray-600 text-sm font-normal leading-relaxed">
+                        {specialty.description}
+                      </p>
+                      <div className="text-xs font-medium text-medifly-teal pt-1">
+                        {specialty.specialists}
+                      </div>
+                      
+                      {/* Hover Arrow */}
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 pt-2">
+                        <ArrowRight className="h-4 w-4 text-medifly-teal mx-auto" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               );
             })}
           </div>
 
-          {/* Bottom Stats */}
-          <div className="mt-16">
-            <div className="bg-medifly-beige rounded-2xl p-8 lg:p-12">
-              <div className="text-center space-y-6">
-                <h3 className="text-2xl font-bold text-medifly-dark">
-                  Can't find your specialty?
-                </h3>
-                <p className="text-medifly-gray max-w-2xl mx-auto">
-                  We work with specialists across all medical fields. Contact our team 
-                  and we'll help connect you with the right expert for your needs.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button 
-                    asChild
-                    className="gradient-teal text-white shadow-soft hover:shadow-lifted"
-                  >
-                    <Link href="/contact">
-                      Get Personalized Help
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Link>
-                  </Button>
-                  
-                  <Button asChild variant="outline">
-                    <Link href="/specialties">
-                      View All Specialties
-                    </Link>
-                  </Button>
-                </div>
-
-                {/* Total stats */}
-                <div className="grid grid-cols-3 gap-6 mt-8 pt-6 border-t border-medifly-teal/20">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-medifly-teal">500+</div>
-                    <div className="text-sm text-medifly-gray">Total Specialists</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-medifly-teal">50+</div>
-                    <div className="text-sm text-medifly-gray">Specialties Covered</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-medifly-teal">15+</div>
-                    <div className="text-sm text-medifly-gray">Countries Available</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Bottom CTA */}
+          
         </div>
       </div>
     </section>

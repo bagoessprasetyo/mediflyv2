@@ -1,184 +1,126 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { TestimonialCard, PremiumCard } from '@/components/ui/premium';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from "motion/react";
+import { TestimonialsColumn } from '@/components/ui/testimonials-columns-1';
+import { Badge } from '@/components/ui/badge';
 
-const testimonials = [
+const healthcareTestimonials = [
   {
-    id: 1,
-    name: 'Sarah M.',
-    location: 'United States',
-    treatment: 'Cardiac Care in Bangkok',
-    avatar: '/api/placeholder/64/64',
-    rating: 5,
-    quote: 'The care I received was exceptional. From booking to recovery, everything was seamless. The doctors were world-class and the facilities were better than what I have at home.',
-    savings: 'Saved $45,000',
-    flag: '🇺🇸'
+    text: "The cardiac surgery in Bangkok saved my life. World-class specialists, advanced technology, and costs 70% lower than home. The care exceeded all expectations.",
+    image: "https://images.unsplash.com/photo-1594824226119-7b2245c9e6a5?q=80&w=150&auto=format&fit=crop",
+    name: "Sarah M.",
+    role: "Heart Surgery Patient • Bangkok",
   },
   {
-    id: 2,
-    name: 'David L.',
-    location: 'Canada',
-    treatment: 'Knee Replacement in Malaysia',
-    avatar: '/api/placeholder/64/64',
-    rating: 5,
-    quote: 'I saved 60% compared to local costs and received world-class treatment. The follow-up care has been outstanding, and I\'m back to playing tennis!',
-    savings: 'Saved $28,000',
-    flag: '🇨🇦'
+    text: "Knee replacement in Malaysia transformed my life. State-of-the-art robotic surgery, excellent rehabilitation, and I'm back to playing tennis at 62!",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop",
+    name: "David L.",
+    role: "Orthopedic Patient • Kuala Lumpur",
   },
   {
-    id: 3,
-    name: 'Maria R.',
-    location: 'Spain',
-    treatment: 'Fertility Treatment in India',
-    avatar: '/api/placeholder/64/64',
-    rating: 5,
-    quote: 'The AI matching was spot-on. My specialist understood my needs perfectly. After years of trying, we finally have our miracle baby thanks to the amazing team.',
-    savings: 'Saved $35,000',
-    flag: '🇪🇸'
+    text: "After years of failed fertility treatments, Mumbai specialists helped us have our miracle baby. The AI matching found the perfect doctor for our case.",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
+    name: "Maria R.",
+    role: "IVF Success • Mumbai",
   },
   {
-    id: 4,
-    name: 'James K.',
-    location: 'Australia',
-    treatment: 'Eye Surgery in Turkey',
-    avatar: '/api/placeholder/64/64',
-    rating: 5,
-    quote: 'From consultation to post-op care, everything exceeded my expectations. The technology was cutting-edge and the results are perfect. Highly recommended!',
-    savings: 'Saved $18,000',
-    flag: '🇦🇺'
+    text: "LASIK surgery in Istanbul was flawless. Latest technology, expert surgeon, perfect 20/20 vision results. Cost less than surgery alone back home.",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
+    name: "James K.",
+    role: "Eye Surgery • Istanbul",
   },
   {
-    id: 5,
-    name: 'Lisa W.',
-    location: 'United Kingdom',
-    treatment: 'Dental Implants in Malaysia',
-    avatar: '/api/placeholder/64/64',
-    rating: 5,
-    quote: 'The entire experience was transformative. Not only did I save money, but the quality of care was superior to what I could get locally. My smile has never looked better!',
-    savings: 'Saved $12,000',
-    flag: '🇬🇧'
-  }
+    text: "Korean plastic surgeons' precision is unmatched. Facial reconstruction after accident restored my confidence with natural-looking, remarkable results.",
+    image: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?q=80&w=150&auto=format&fit=crop",
+    name: "Emily Chen",
+    role: "Reconstructive Surgery • Seoul",
+  },
+  {
+    text: "Complex spinal surgery in Singapore exceeded expectations. Robotic technology, expert team, half the recovery time. My health investment paid off completely.",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop",
+    name: "Robert Singh",
+    role: "Spinal Surgery • Singapore",
+  },
+  {
+    text: "Cancer treatment in Thailand combined advanced immunotherapy with compassionate care. The medical team guided me to full recovery with hope and expertise.",
+    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=150&auto=format&fit=crop",
+    name: "Lisa Thompson",
+    role: "Oncology Patient • Bangkok",
+  },
+  {
+    text: "Dental implants in Malaysia exceeded expectations. Modern facility, skilled specialists, and my smile has never looked better. Saved thousands on treatment.",
+    image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?q=80&w=150&auto=format&fit=crop",
+    name: "Michael Johnson",
+    role: "Dental Surgery • Kuala Lumpur",
+  },
+  {
+    text: "Neurosurgery in Singapore was life-changing. Brain tumor removal by expert surgeons using latest techniques. Complete recovery and renewed hope.",
+    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=150&auto=format&fit=crop",
+    name: "Amanda Rivera",
+    role: "Brain Surgery • Singapore",
+  },
 ];
 
+// Split testimonials into columns
+const firstColumn = healthcareTestimonials.slice(0, 3);
+const secondColumn = healthcareTestimonials.slice(3, 6);
+const thirdColumn = healthcareTestimonials.slice(6, 9);
+
 export function PatientTestimonials() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Auto-rotate testimonials
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [isAutoPlaying]);
-
-  const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    setIsAutoPlaying(false);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-    setIsAutoPlaying(false);
-  };
-
-  const goToTestimonial = (index: number) => {
-    setCurrentIndex(index);
-    setIsAutoPlaying(false);
-  };
-
-  const currentTestimonial = testimonials[currentIndex];
-
   return (
-    <section className="space-section bg-section-blue">
-      <div className="container-premium">
-        <div className="max-w-6xl mx-auto space-content">
+    <section className="py-20 lg:py-28 bg-white relative">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center space-content-sm">
-            <h2 className="text-section-title">
-              Patient Success Stories
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center justify-center max-w-4xl mx-auto mb-16"
+          >
+            <div className="flex justify-center mb-6">
+              <Badge 
+                variant="secondary"
+                className="bg-medifly-light-blue text-medifly-teal border-0 font-medium"
+              >
+                PATIENT SUCCESS STORIES
+              </Badge>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-medium tracking-tighter text-gray-900 mb-6 text-center leading-tight">
+              Transforming Lives Through Quality Healthcare
             </h2>
-            <p className="text-body container-content">
+            <p className="text-lg text-gray-600 text-center leading-relaxed max-w-3xl">
               Real stories from patients who found world-class healthcare through our platform.
-              Join thousands who have transformed their health journey.
+              Each journey represents hope, healing, and the power of accessible medical excellence.
             </p>
+          </motion.div>
+
+          {/* Testimonials Columns */}
+          <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-h-[740px] overflow-hidden">
+            <TestimonialsColumn testimonials={firstColumn} duration={15} />
+            <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={19} />
+            <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={17} />
           </div>
 
-          {/* Main Testimonial Carousel */}
-          <div className="relative">
-            <TestimonialCard
-              name={currentTestimonial.name}
-              location={currentTestimonial.location}
-              treatment={currentTestimonial.treatment}
-              avatar={currentTestimonial.avatar}
-              rating={currentTestimonial.rating}
-              quote={currentTestimonial.quote}
-              savings={currentTestimonial.savings}
-              flag={currentTestimonial.flag}
-              variant="featured"
-              className="max-w-4xl mx-auto"
-            />
-
-            {/* Navigation Arrows */}
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={prevTestimonial}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full shadow-sm bg-white hover:bg-gray-50 border-gray-200 premium-hover-lift"
-            >
-              <ChevronLeft className="h-5 w-5 text-gray-600" />
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={nextTestimonial}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full shadow-sm bg-white hover:bg-gray-50 border-gray-200 premium-hover-lift"
-            >
-              <ChevronRight className="h-5 w-5 text-gray-600" />
-            </Button>
-          </div>
-
-          {/* Dots Navigation */}
-          <div className="flex justify-center gap-2 mt-8">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToTestimonial(index)}
-                className={`
-                  w-3 h-3 rounded-full transition-all duration-300
-                  ${index === currentIndex 
-                    ? 'bg-medifly-teal scale-125' 
-                    : 'bg-gray-300 hover:bg-gray-400'
-                  }
-                `}
-              />
-            ))}
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="space-y-2">
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center mt-20 pt-16 border-t border-gray-200">
+            <div className="space-y-3">
               <div className="text-3xl lg:text-4xl font-bold text-medifly-teal tracking-tight">150K+</div>
-              <div className="text-body-secondary">Patients Served</div>
+              <div className="text-gray-600 font-medium">Patients Served</div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="text-3xl lg:text-4xl font-bold text-medifly-teal tracking-tight">4.9★</div>
-              <div className="text-body-secondary">Average Rating</div>
+              <div className="text-gray-600 font-medium">Average Rating</div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="text-3xl lg:text-4xl font-bold text-medifly-teal tracking-tight">95%</div>
-              <div className="text-body-secondary">Success Rate</div>
+              <div className="text-gray-600 font-medium">Success Rate</div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="text-3xl lg:text-4xl font-bold text-medifly-teal tracking-tight">$2M+</div>
-              <div className="text-body-secondary">Total Savings</div>
+              <div className="text-gray-600 font-medium">Total Savings</div>
             </div>
           </div>
         </div>

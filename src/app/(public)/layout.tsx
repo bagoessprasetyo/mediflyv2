@@ -3,6 +3,7 @@ import { PublicFooter } from '@/components/public/layout/public-footer';
 import { LiveChatWidget } from '@/components/public/layout/live-chat-widget';
 import { ScrollToTop } from '@/components/public/layout/scroll-to-top';
 import type { Metadata } from 'next';
+import { FloatingAiAssistant } from '@/components/ui/glowing-ai-chat-assistant';
 
 export const metadata: Metadata = {
   title: 'MediFly - World-Class Healthcare Anywhere',
@@ -71,7 +72,8 @@ export default function PublicLayout({
       <PublicFooter />
       
       {/* Live Chat Widget */}
-      <LiveChatWidget />
+      {/* <LiveChatWidget /> */}
+      <FloatingAiAssistant />
       
       {/* Scroll to Top Button */}
       <ScrollToTop />

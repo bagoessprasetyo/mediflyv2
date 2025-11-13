@@ -15,16 +15,35 @@ export async function POST(req: Request) {
     console.log('🤖 AI Chat - Processing request');
     console.log('📝 Messages count:', messages.length);
     console.log('🔍 Search context:', searchContext);
+    console.log('📄 Raw messages:', JSON.stringify(messages, null, 2));
 
     // Convert UI messages to model messages
+    try {
+      const modelMessages = convertToModelMessages(messages);
+      console.log('✅ Converted to model messages:', modelMessages.length);
+      console.log('🔄 Model messages structure:', JSON.stringify(modelMessages, null, 2));
+    } catch (conversionError) {
+      console.error('❌ Error converting messages:', conversionError);
+      console.error('📝 Problematic messages:', JSON.stringify(messages, null, 2));
+      const errorMessage = conversionError instanceof Error ? conversionError.message : 'Unknown conversion error';
+      throw new Error(`Message conversion failed: ${errorMessage}`);
+    }
+
     const modelMessages = convertToModelMessages(messages);
-    console.log('✅ Converted to model messages:', modelMessages.length);
     
     try {
+      // Check for required environment variables
+      if (!process.env.GROQ_API_KEY) {
+        console.error('❌ GROQ_API_KEY environment variable is missing');
+        throw new Error('GROQ_API_KEY is required but not configured');
+      }
+
       // Initialize Groq with AI SDK
       const groq = createGroq({
         apiKey: process.env.GROQ_API_KEY,
       });
+      
+      console.log('🔧 Groq client initialized successfully');
 
       // Use AI SDK streamText with Groq (no tools, just reasoning)
       const result = await streamText({

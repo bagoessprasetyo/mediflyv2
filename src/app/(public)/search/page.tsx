@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AIChatAssistant } from './components/ai-chat';
+import { AIChatAssistantAnimated } from './components/ai-chat-animated';
 import { SearchResults } from './components/search-results';
 import { SearchFilters } from './components/search-filters';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
@@ -31,6 +32,9 @@ interface SearchFilters {
   telehealth?: boolean;
   sortBy?: string;
 }
+
+// Configuration: Set to true to use animated chat interface, false for original
+const USE_ANIMATED_CHAT = true;
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
@@ -177,10 +181,17 @@ function SearchPageContent() {
             {/* Left Panel - AI Chat Assistant */}
             <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className="min-w-0">
               <div className="h-full bg-white border-r border-gray-200 flex flex-col">
-                <AIChatAssistant 
-                  searchContext={chatContext}
-                  onFilterSuggestion={handleFilterChange}
-                />
+                {USE_ANIMATED_CHAT ? (
+                  <AIChatAssistantAnimated 
+                    searchContext={chatContext}
+                    onFilterSuggestion={handleFilterChange}
+                  />
+                ) : (
+                  <AIChatAssistant 
+                    searchContext={chatContext}
+                    onFilterSuggestion={handleFilterChange}
+                  />
+                )}
               </div>
             </ResizablePanel>
 

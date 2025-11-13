@@ -1,6 +1,25 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Aurora Background Animations */
+@keyframes animate-aurora-1 {
+  from {
+    transform: translate(-20%, -20%) scale(1);
+  }
+  to {
+    transform: translate(20%, 20%) scale(1.2);
+  }
+}
+
+@keyframes animate-aurora-2 {
+  from {
+    transform: translate(10%, 10%) scale(1);
+  }
+  to {
+    transform: translate(-10%, -10%) scale(0.8);
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -340,5 +359,73 @@
   
   .container-content {
     @apply max-w-4xl mx-auto;
+  }
+
+  /* Aurora Background Effects */
+  .aurora-container {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+
+  .aurora-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--medifly-teal) 0%, transparent 70%);
+    opacity: 0.1;
+    animation: animate-aurora-1 20s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  .aurora-container::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--medifly-light-blue) 0%, transparent 70%);
+    opacity: 0.15;
+    animation: animate-aurora-2 25s ease-in-out infinite alternate-reverse;
+    pointer-events: none;
+  }
+
+  /* Bento Grid Layout */
+  .bento-grid {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+    grid-auto-rows: minmax(200px, auto);
+  }
+
+  .bento-item {
+    @apply bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .bento-item:hover {
+    @apply shadow-xl;
+  }
+
+  /* Responsive Bento Grid Classes */
+  @media (min-width: 768px) {
+    .col-span-2 {
+      grid-column: span 2;
+    }
+    .row-span-2 {
+      grid-row: span 2;
+    }
+  }
+
+  .col-span-full-mobile {
+    @apply col-span-full;
+  }
+
+  @media (min-width: 768px) {
+    .col-span-full-mobile {
+      grid-column: span 4;
+    }
   }
 }

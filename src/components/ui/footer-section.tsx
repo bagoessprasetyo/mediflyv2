@@ -4,72 +4,36 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { 
-  Stethoscope,
-  Send,
-  Shield,
-  Award,
-  Users,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Twitter,
-  Heart,
-  Phone,
-  Mail,
-  MapPin
-} from "lucide-react"
-import Link from "next/link"
+import { Facebook, Instagram, Linkedin, Moon, Send, Sun, Twitter } from "lucide-react"
 
-const quickLinks = [
-  { name: "Find Specialists", href: "/specialists" },
-  { name: "Browse Destinations", href: "/destinations" },
-  { name: "Medical Procedures", href: "/procedures" },
-  { name: "Patient Support", href: "/patient-support" },
-  { name: "Telehealth", href: "/telehealth" }
-]
+function Footerdemo() {
+  const [isDarkMode, setIsDarkMode] = React.useState(true)
+  const [isChatOpen, setIsChatOpen] = React.useState(false)
 
-const serviceLinks = [
-  { name: "Emergency Care", href: "/emergency" },
-  { name: "Health Checkups", href: "/checkups" },
-  { name: "Surgery Planning", href: "/surgery" },
-  { name: "Rehabilitation", href: "/rehabilitation" },
-  { name: "Mental Health", href: "/mental-health" }
-]
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+  }, [isDarkMode])
 
-const supportLinks = [
-  { name: "Help Center", href: "/help" },
-  { name: "Contact Us", href: "/contact" },
-  { name: "Insurance Guide", href: "/insurance" },
-  { name: "Travel Assistance", href: "/travel" },
-  { name: "Patient Stories", href: "/stories" }
-]
-
-export function PublicFooter() {
   return (
     <footer className="relative border-t bg-background text-foreground transition-colors duration-300">
       <div className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Newsletter Section */}
           <div className="relative">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-medifly-teal rounded-xl flex items-center justify-center">
-                <Stethoscope className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <div className="text-lg font-bold">MediFly</div>
-                <div className="text-xs text-muted-foreground">World-Class Healthcare</div>
-              </div>
-            </div>
-            <h2 className="mb-4 text-xl font-bold tracking-tight">Stay Connected</h2>
+            <h2 className="mb-4 text-3xl font-bold tracking-tight">Stay Connected</h2>
             <p className="mb-6 text-muted-foreground">
-              Get healthcare insights and exclusive updates delivered to your inbox.
+              Join our newsletter for the latest updates and exclusive offers.
             </p>
             <form className="relative">
               <Input
@@ -86,61 +50,40 @@ export function PublicFooter() {
                 <span className="sr-only">Subscribe</span>
               </Button>
             </form>
-            <p className="mt-3 text-xs text-muted-foreground">
-              We respect your privacy. Unsubscribe at any time.
-            </p>
             <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
           </div>
-          
-          {/* Quick Links */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Healthcare Services</h3>
+            <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
             <nav className="space-y-2 text-sm">
-              {quickLinks.map((link) => (
-                <Link 
-                  key={link.name}
-                  href={link.href} 
-                  className="block transition-colors hover:text-primary"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              <a href="#" className="block transition-colors hover:text-primary">
+                Home
+              </a>
+              <a href="#" className="block transition-colors hover:text-primary">
+                About Us
+              </a>
+              <a href="#" className="block transition-colors hover:text-primary">
+                Services
+              </a>
+              <a href="#" className="block transition-colors hover:text-primary">
+                Products
+              </a>
+              <a href="#" className="block transition-colors hover:text-primary">
+                Contact
+              </a>
             </nav>
           </div>
-          
-          {/* Services */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Medical Specialties</h3>
-            <nav className="space-y-2 text-sm">
-              {serviceLinks.map((link) => (
-                <Link 
-                  key={link.name}
-                  href={link.href} 
-                  className="block transition-colors hover:text-primary"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
+            <h3 className="mb-4 text-lg font-semibold">Contact Us</h3>
+            <address className="space-y-2 text-sm not-italic">
+              <p>123 Innovation Street</p>
+              <p>Tech City, TC 12345</p>
+              <p>Phone: (123) 456-7890</p>
+              <p>Email: hello@example.com</p>
+            </address>
           </div>
-          
-          {/* Contact & Social */}
           <div className="relative">
-            <h3 className="mb-4 text-lg font-semibold">Get Support</h3>
-            <nav className="space-y-2 text-sm mb-6">
-              {supportLinks.map((link) => (
-                <Link 
-                  key={link.name}
-                  href={link.href} 
-                  className="block transition-colors hover:text-primary"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-            
-            <h4 className="mb-4 text-lg font-semibold">Follow Us</h4>
-            <div className="mb-6 flex space-x-3">
+            <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
+            <div className="mb-6 flex space-x-4">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -194,27 +137,39 @@ export function PublicFooter() {
                 </Tooltip>
               </TooltipProvider>
             </div>
+            <div className="flex items-center space-x-2">
+              <Sun className="h-4 w-4" />
+              <Switch
+                id="dark-mode"
+                checked={isDarkMode}
+                onCheckedChange={setIsDarkMode}
+              />
+              <Moon className="h-4 w-4" />
+              <Label htmlFor="dark-mode" className="sr-only">
+                Toggle dark mode
+              </Label>
+            </div>
           </div>
         </div>
-        
-        {/* Bottom Bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 text-center md:flex-row">
           <p className="text-sm text-muted-foreground">
-            © 2024 MediFly. All rights reserved.
+            © 2024 Your Company. All rights reserved.
           </p>
           <nav className="flex gap-4 text-sm">
-            <Link href="/privacy" className="transition-colors hover:text-primary">
+            <a href="#" className="transition-colors hover:text-primary">
               Privacy Policy
-            </Link>
-            <Link href="/terms" className="transition-colors hover:text-primary">
+            </a>
+            <a href="#" className="transition-colors hover:text-primary">
               Terms of Service
-            </Link>
-            <Link href="/contact" className="transition-colors hover:text-primary">
-              Contact Support
-            </Link>
+            </a>
+            <a href="#" className="transition-colors hover:text-primary">
+              Cookie Settings
+            </a>
           </nav>
         </div>
       </div>
     </footer>
   )
 }
+
+export { Footerdemo }
