@@ -2,13 +2,14 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AIChatAssistant } from './components/ai-chat';
-import { AIChatAssistantAnimated } from './components/ai-chat-animated';
+// AI Chat functionality now available in sidebar
 import { SearchResults } from './components/search-results';
 import { SearchFilters } from './components/search-filters';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { SearchHeaderSkeleton, SearchFiltersSkeletonDesktop, SearchFiltersSkeletonMobile } from '@/components/ui/search-header-skeleton';
+import { SearchResultsSkeleton } from '@/components/ui/search-results-skeleton';
 import { AlertCircle, Search } from 'lucide-react';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 interface SearchData {
   query: string;
@@ -33,8 +34,7 @@ interface SearchFilters {
   sortBy?: string;
 }
 
-// Configuration: Set to true to use animated chat interface, false for original
-const USE_ANIMATED_CHAT = true;
+// AI Chat functionality is now integrated into the sidebar
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
@@ -42,6 +42,7 @@ function SearchPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<SearchFilters>({});
+  const [filtersLoading, setFiltersLoading] = useState(false);
 
   const query = searchParams.get('q') || searchParams.get('concern') || '';
   const location = searchParams.get('location') || '';
@@ -93,23 +94,22 @@ function SearchPageContent() {
   };
 
   // Handle filter changes
-  const handleFilterChange = (newFilters: SearchFilters) => {
+  const handleFilterChange = async (newFilters: SearchFilters) => {
     setFilters(newFilters);
     if (query) {
-      performSearch(query, location, newFilters);
+      setFiltersLoading(true);
+      await performSearch(query, location, newFilters);
+      setFiltersLoading(false);
     }
   };
 
-  // Prepare context for AI chat
-  const chatContext = {
-    query,
-    location,
-    hasSearched: !!searchData,
-    resultsCount: searchData ? searchData.metadata.hospitalCount + searchData.metadata.doctorCount : 0,
-    hospitalCount: searchData?.metadata.hospitalCount || 0,
-    doctorCount: searchData?.metadata.doctorCount || 0,
-    relevantSpecialties: searchData?.metadata.relevantSpecialties || []
-  };
+  // Search metadata for display
+  const searchMetadata = searchData ? {
+    totalResults: searchData.metadata.hospitalCount + searchData.metadata.doctorCount,
+    hospitalCount: searchData.metadata.hospitalCount,
+    doctorCount: searchData.metadata.doctorCount,
+    specialties: searchData.metadata.relevantSpecialties
+  } : null;
 
   if (!query.trim()) {
     return (
@@ -131,13 +131,47 @@ function SearchPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container-premium py-16">
-          <div className="flex items-center justify-center">
-            <LoadingSpinner size="lg" />
-            <span className="ml-3 text-body text-gray-600">
-              Searching for healthcare options...
-            </span>
+      <div className="flex flex-col h-screen">
+        {/* Search Header Skeleton */}
+        <SearchHeaderSkeleton />
+
+        {/* Main Content */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex flex-1 flex-col">
+            {/* Filters Bar Skeleton */}
+            <SearchFiltersSkeletonDesktop />
+
+            {/* Results Skeleton */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <SearchResultsSkeleton cardCount={12} />
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="lg:hidden flex flex-1 flex-col">
+            {/* Filters Bar for Mobile */}
+            <SearchFiltersSkeletonMobile />
+
+            {/* Main Content Area */}
+            <div className="flex-1 overflow-hidden">
+              {/* Tab Navigation for Mobile - skeleton version */}
+              <div className="bg-white border-b border-gray-200 px-4 py-2">
+                <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+                  <div className="flex-1 py-2 px-3 bg-white rounded-md shadow-sm">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  <div className="flex-1 py-2 px-3">
+                    <div className="h-4 bg-gray-100 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-4">
+                <SearchResultsSkeleton cardCount={8} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -169,66 +203,61 @@ function SearchPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col h-screen">
       {/* Search Header */}
-      
-
-      {/* Main resizable content */}
-      <div className="h-screen">
-        {/* Desktop Layout with Resizable Panels */}
-        <div className="hidden lg:block h-full">
-          <ResizablePanelGroup direction="horizontal" className="min-h-full">
-            {/* Left Panel - AI Chat Assistant */}
-            <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className="min-w-0">
-              <div className="h-full bg-white border-r border-gray-200 flex flex-col">
-                {USE_ANIMATED_CHAT ? (
-                  <AIChatAssistantAnimated 
-                    searchContext={chatContext}
-                    onFilterSuggestion={handleFilterChange}
-                  />
-                ) : (
-                  <AIChatAssistant 
-                    searchContext={chatContext}
-                    onFilterSuggestion={handleFilterChange}
-                  />
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-4 shrink-0">
+        <SidebarTrigger />
+        <div className="flex-1">
+          <div className="flex items-center gap-4">
+            <Search className="h-5 w-5 text-gray-500" />
+            <div className="flex-1">
+              <h1 className="text-lg font-semibold text-gray-900">
+                {query ? `"${query}"` : 'Search Results'}
+              </h1>
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                {location && <span>in {location}</span>}
+                {searchMetadata && (
+                  <span>
+                    {searchMetadata.totalResults} results 
+                    ({searchMetadata.hospitalCount} hospitals, {searchMetadata.doctorCount} doctors)
+                  </span>
                 )}
               </div>
-            </ResizablePanel>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Resizable Handle */}
-            <ResizableHandle withHandle className="w-2 bg-gray-100 hover:bg-gray-200 transition-colors" />
+      {/* Main Content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Layout */}
+        <div className="hidden lg:flex flex-1 flex-col">
+          {/* Filters Bar */}
+          <div className="bg-white border-b border-gray-200 px-6 py-4 shrink-0">
+            <SearchFilters 
+              filters={filters}
+              onFiltersChange={handleFilterChange}
+              specialties={searchData?.metadata.relevantSpecialties || []}
+            />
+          </div>
 
-            {/* Right Panel - Search Results */}
-            <ResizablePanel defaultSize={65} minSize={50} className="min-w-0">
-              <div className="h-full flex flex-col bg-gray-50">
-                {/* Filters Bar */}
-                <div className="bg-white border-b border-gray-200 px-6 py-4 shrink-0">
-                  <SearchFilters 
-                    filters={filters}
-                    onFiltersChange={handleFilterChange}
-                    specialties={searchData?.metadata.relevantSpecialties || []}
-                  />
-                </div>
-
-                {/* Results */}
-                <div className="flex-1 overflow-y-auto p-6">
-                  {searchData && (
-                    <SearchResults
-                      hospitals={searchData.hospitals}
-                      doctors={searchData.doctors}
-                      query={query}
-                      location={location}
-                      filters={filters}
-                    />
-                  )}
-                </div>
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+          {/* Results */}
+          <div className="flex-1 overflow-y-auto p-6">
+            {searchData && (
+              <SearchResults
+                hospitals={searchData.hospitals}
+                doctors={searchData.doctors}
+                query={query}
+                location={location}
+                filters={filters}
+                loading={filtersLoading}
+              />
+            )}
+          </div>
         </div>
 
-        {/* Mobile/Tablet Layout */}
-        <div className="lg:hidden h-full flex flex-col">
+        {/* Mobile Layout */}
+        <div className="lg:hidden flex flex-1 flex-col">
           {/* Filters Bar for Mobile */}
           <div className="bg-white border-b border-gray-200 px-4 py-3 shrink-0">
             <SearchFilters 
@@ -265,6 +294,7 @@ function SearchPageContent() {
                   query={query}
                   location={location}
                   filters={filters}
+                  loading={filtersLoading}
                 />
               )}
             </div>

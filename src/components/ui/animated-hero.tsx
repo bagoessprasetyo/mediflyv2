@@ -49,7 +49,7 @@ function AnimatedHero({ onConsultClick, onFindDoctorsClick }: AnimatedHeroProps)
   return (
     <div className="w-full bg-gradient-to-br from-medifly-beige to-white">
       <div className="container mx-auto px-4">
-        <div className="flex gap-8 pt-24 pb-10 items-center justify-center flex-col relative">
+        <div className="flex gap-8 pt-32 pb-10 items-center justify-center flex-col relative">
           {/* Background decorative elements */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute top-20 left-10 w-32 h-32 bg-medifly-light-blue/20 rounded-full blur-xl" />
