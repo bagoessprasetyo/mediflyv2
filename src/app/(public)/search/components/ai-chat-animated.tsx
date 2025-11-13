@@ -990,6 +990,7 @@ export function AIChatAssistantAnimated({ searchContext, onFilterSuggestion }: A
             <h3 className="font-semibold text-gray-900">Aira</h3>
             <span className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">AI</span>
           </div>
+          
           <p className="text-sm text-gray-600 flex items-center gap-1">
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
             Ready to help you find care

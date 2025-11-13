@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
+import { useAI } from './layout';
 import { useSearchParams } from 'next/navigation';
 // AI Chat functionality now available in sidebar
 import { SearchResults } from './components/search-results';
@@ -38,6 +39,7 @@ interface SearchFilters {
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
+  const { setSearchContext } = useAI();
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,6 +87,15 @@ function SearchPageContent() {
 
       const data = await response.json();
       setSearchData(data);
+      
+      // Update AI context with search data
+      setSearchContext({
+        query: searchQuery,
+        location: searchLocation,
+        hospitalCount: data.metadata.hospitalCount,
+        doctorCount: data.metadata.doctorCount,
+        relevantSpecialties: data.metadata.relevantSpecialties
+      });
     } catch (err) {
       console.error('Search error:', err);
       setError(err instanceof Error ? err.message : 'Failed to search');

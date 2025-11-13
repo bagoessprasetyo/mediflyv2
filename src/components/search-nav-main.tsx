@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { IconCirclePlusFilled, IconSearch, type Icon } from "@tabler/icons-react"
+import { IconSearch, type Icon } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
+import { AnimatedTalkButton } from "@/components/ui/button-8"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -16,6 +17,7 @@ import {
 
 export function SearchNavMain({
   items,
+  onAIToggle,
 }: {
   items: {
     title: string
@@ -23,6 +25,7 @@ export function SearchNavMain({
     icon?: Icon
     description?: string
   }[]
+  onAIToggle?: () => void
 }) {
   const pathname = usePathname()
   
@@ -31,26 +34,19 @@ export function SearchNavMain({
       <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip="New Search"
-              className="bg-medifly-teal text-white hover:bg-medifly-teal/90 hover:text-white active:bg-medifly-teal/90 active:text-white min-w-8 duration-200 ease-linear"
-              asChild
-            >
-              <Link href="/search">
-                <IconCirclePlusFilled />
-                <span>Talk with Aira</span>
-              </Link>
-            </SidebarMenuButton>
+          <SidebarMenuItem className="flex flex-col gap-2">
+            <AnimatedTalkButton onClick={() => onAIToggle?.()}>
+              Talk with Aira
+            </AnimatedTalkButton>
             <Button
-              size="icon"
-              className="size-8 group-data-[collapsible=icon]:opacity-0"
+              size="sm"
+              className="group-data-[collapsible=icon]:opacity-0"
               variant="outline"
               asChild
             >
-              <Link href="/search">
-                <IconSearch />
-                <span className="sr-only">Search</span>
+              <Link href="/search" className="flex items-center gap-2">
+                <IconSearch className="h-4 w-4" />
+                <span>New Search</span>
               </Link>
             </Button>
           </SidebarMenuItem>

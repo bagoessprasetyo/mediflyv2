@@ -1,4 +1,4 @@
-import { streamText, convertToModelMessages } from 'ai';
+import { streamText } from 'ai';
 import { createGroq } from '@ai-sdk/groq';
 
 export async function POST(req: Request) {
@@ -17,19 +17,9 @@ export async function POST(req: Request) {
     console.log('🔍 Search context:', searchContext);
     console.log('📄 Raw messages:', JSON.stringify(messages, null, 2));
 
-    // Convert UI messages to model messages
-    try {
-      const modelMessages = convertToModelMessages(messages);
-      console.log('✅ Converted to model messages:', modelMessages.length);
-      console.log('🔄 Model messages structure:', JSON.stringify(modelMessages, null, 2));
-    } catch (conversionError) {
-      console.error('❌ Error converting messages:', conversionError);
-      console.error('📝 Problematic messages:', JSON.stringify(messages, null, 2));
-      const errorMessage = conversionError instanceof Error ? conversionError.message : 'Unknown conversion error';
-      throw new Error(`Message conversion failed: ${errorMessage}`);
-    }
-
-    const modelMessages = convertToModelMessages(messages);
+    // Use messages directly since they're already in the correct format
+    console.log('✅ Using messages directly:', messages.length);
+    console.log('🔄 Message structure:', JSON.stringify(messages, null, 2));
     
     try {
       // Check for required environment variables
@@ -48,7 +38,7 @@ export async function POST(req: Request) {
       // Use AI SDK streamText with Groq (no tools, just reasoning)
       const result = await streamText({
         model: groq('openai/gpt-oss-120b'),
-        messages: modelMessages,
+        messages: messages,
         system: `You are Aira, a helpful AI Medical Concierge for MediFly.
 
 Your role is to help patients understand their healthcare options and provide guidance about finding the right hospitals and doctors for their needs.
@@ -60,7 +50,7 @@ You MUST structure your responses in this exact format:
 [Show your internal reasoning process here. Analyze the user's question, consider the search context, think through the medical considerations, evaluate the options, and plan your response. Be thorough in your analysis.]
 </thinking>
 
-[Your final response to the user - warm, empathetic, and professional guidance]
+[Your final response to the user - Use **markdown formatting** to make your responses clear and well-structured. Use headings, bullet points, bold text, and code blocks when appropriate. Be warm, empathetic, and professional.]
 
 **Your Capabilities:**
 - Provide general healthcare guidance and advice
@@ -79,6 +69,13 @@ ${searchContext ? `
 
 **Important Guidelines:**
 - Be warm, empathetic, and professional
+- Use **markdown formatting** extensively for clear presentation:
+  - Use ## for main sections, ### for subsections
+  - Use **bold** for important points and key information
+  - Use bullet points (- or *) for lists
+  - Use numbered lists (1.) for step-by-step instructions
+  - Use > for important quotes or highlights
+  - Use 'code' for specific medical terms or technical details
 - Use the search context to provide relevant insights about the results
 - ALWAYS start with <thinking> tags to show your reasoning process
 - Ask clarifying questions when needed
@@ -86,7 +83,7 @@ ${searchContext ? `
 - Always recommend consulting with qualified medical professionals
 - Focus on helping users understand their options and make informed decisions
 
-Remember: Always show your thinking process in <thinking> tags before your main response.`,
+Remember: Always show your thinking process in <thinking> tags before your main response, and use rich markdown formatting in your responses.`,
         temperature: 0.7
       });
 

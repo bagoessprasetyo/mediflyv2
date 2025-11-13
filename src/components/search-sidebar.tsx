@@ -18,7 +18,12 @@ import {
 } from "@/components/ui/sidebar"
 import { searchNavigationData } from "@/lib/search-navigation"
 
-export function SearchSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function SearchSidebar({ 
+  onAIToggle,
+  ...props 
+}: React.ComponentProps<typeof Sidebar> & {
+  onAIToggle?: () => void
+}) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -44,7 +49,7 @@ export function SearchSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
       </SidebarHeader>
       
       <SidebarContent>
-        <SearchNavMain items={searchNavigationData.quickActions} />
+        <SearchNavMain items={searchNavigationData.quickActions} onAIToggle={onAIToggle} />
         <SearchNavFilters items={searchNavigationData.filterPresets} />
         <SearchNavSpecialties items={searchNavigationData.specialtyCategories} />
         <SearchNavLocations items={searchNavigationData.locationPresets} />
